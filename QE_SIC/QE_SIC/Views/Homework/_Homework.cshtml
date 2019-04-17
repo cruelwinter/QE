@@ -1,0 +1,56 @@
+﻿@using QE.Models
+@model List<QE.Models.ViewModels.Submission_view>
+
+    <table class="table">
+            <tr>
+                <th class="col-md-1 text-center">Class</th>
+                <th class="col-md-1 text-center">No</th>
+                <th class="col-md-3 text-center">Student Name</th>
+                <th class="col-md-2 text-center">Submission Date</th>
+                <th class="col-md-1 text-center">Mark</th>
+                <th class="col-md-2 text-center">Submitted</th>
+                <th class="col-md-2 text-center">Remark</th>
+            </tr>
+        
+        @for (int s = 0; s < Model.Count; s++)
+            {
+                <tr>
+                    @Html.HiddenFor(Model => Model[s].homework_id)
+                    @Html.HiddenFor(Model => Model[s].group_id)
+                    @Html.HiddenFor(Model => Model[s].QE_class)
+                    @Html.HiddenFor(Model => Model[s].QE_class_name)
+                    @Html.HiddenFor(Model => Model[s].group_name)
+                    @Html.HiddenFor(Model => Model[s].class_num)
+                    @Html.HiddenFor(Model => Model[s].student_id)
+                    @Html.HiddenFor(Model => Model[s].submission_id)
+                    @Html.HiddenFor(Model => Model[s].student_name)
+                    @Html.HiddenFor(Model => Model[s].submit_date)
+                    @Html.HiddenFor(Model => Model[s].mark)
+
+                    <td class="col-md-1">
+                        @Html.DisplayFor(model => model[s].QE_class_name)
+                    </td>
+                    <td class="col-md-1">
+                        @Html.DisplayFor(model => model[s].class_num)
+                    </td>
+                    <td class="col-md-3">
+                        @Html.DisplayFor(model => model[s].student_name)
+                    </td>
+                    <td class="col-md-2">
+                        @Html.DisplayFor(model => model[s].submit_date)
+                    </td>
+                    <td class="col-md-1">
+                        @Html.EditorFor(model => model[s].mark, new { htmlAttributes = new { @class = "input-Box" } })
+                    </td>
+                    <td class="col-md-2">
+                        @Html.CheckBoxFor(model => model[s].contain)
+                    </td>
+                    <td class="col-md-2">
+                        @Html.EditorFor(model => model[s].remark, new { htmlAttributes = new { @class = "input-Box" } })
+                    </td>
+                </tr>
+            }
+    </table>
+
+
+

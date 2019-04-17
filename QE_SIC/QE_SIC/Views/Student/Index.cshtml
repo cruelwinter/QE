@@ -1,0 +1,64 @@
+﻿@using QE.Models
+@{
+    ViewBag.Title = "Index";
+}
+
+<!DOCTYPE html>
+<style>
+    #IndexPage {
+        min-width: 1024px;
+        min-height: 576px;
+        background-color: #f2f2f2;
+        opacity: 0.985;
+        font-size: 30px;
+        text-align: center;
+        vertical-align: middle;
+        text-align: center;
+        vertical-align: middle;
+        padding: 250px;
+    }
+
+    #Notice {
+        display: inline;
+    }
+</style>
+
+
+
+<body>
+    <div id="IndexPage">
+        <label id="Notice">@Constant.CommonLabel.ServiceNA</label>
+    </div>
+
+
+
+
+<div id="message">The message</div>';
+    
+</body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+
+
+
+    function getMessageText(arr, item) {
+
+        var count = 0;
+        for (var i = 0; i < arr; i++) {
+            if (arr[i] == item) {
+                count++;
+            }
+        }
+
+      
+    }
+
+    var arr = [
+        "apple",
+        ["banana", "strawberry", "apple"]
+    ];
+
+    getMessageText(arr, "apple");
+    
+</script>

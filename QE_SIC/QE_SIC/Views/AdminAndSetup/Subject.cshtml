@@ -1,0 +1,318 @@
+﻿@using QE.Models
+@model SubjectViewModel
+
+@{
+    ViewBag.Title = "Subjects";
+}
+
+<style>
+    .GeneralPage {
+        min-width: 1024px;
+        min-height: 576px;
+        background-color: #f2f2f2;
+        opacity: 0.985;
+        text-align: center;
+        vertical-align: middle;
+        text-align: center;
+        vertical-align: middle;
+        padding: 10px;
+    }
+
+    .termBox {
+        margin: 10px;
+        text-align: left;
+        font-weight: bold;
+        color: #5b5b5b;
+    }
+
+        .termBox select {
+            border-radius: 2px;
+            color: #5b5b5b;
+        }
+
+    .subjectT {
+        width: 100%;
+        table-layout: fixed;
+        word-wrap: break-word;
+    }
+
+        .subjectT th {
+            text-align: center;
+        }
+
+        .subjectT td {
+            text-align: center;
+        }
+
+        .MainSubject{margin-bottom:2px;}
+
+    .subjectA {
+        margin-top: 10px;
+        margin-bottom: 10px;
+        width: 100%;
+        table-layout: fixed;
+        display: none;
+    }
+
+    .blind, .blind2{display:none;}
+
+    .transparent {
+        background: none;
+        border: none;
+        color: #777777;
+    }
+
+    .add-btn {
+        width: 20%;
+        vertical-align: middle;
+    }
+
+    .input-Box {
+        border: 1px solid transparent;
+        padding: 2px;
+        vertical-align: middle;
+        width: 100%;
+        min-width: 100%;
+        text-align: center;
+        text-overflow: clip;
+    }
+
+    .blackBtn {
+        background-color: #777777;
+        font-weight: bold;
+        color: white;
+        border: none;
+        height: 30px;
+        width: 200px;
+        border-radius: 2px;
+        margin: 2px;
+        display: none;
+    }
+
+    #editForm {
+        float: right;
+    }
+
+
+    .fade {
+        opacity: 0;
+        display: none;
+        -webkit-transition: opacity 0.15s linear;
+        -moz-transition: opacity 0.15s linear;
+        -o-transition: opacity 0.15s linear;
+        transition: opacity 0.15s linear;
+        z-index: 1;
+    }
+
+        .fade.in {
+            opacity: 1;
+            display: block;
+        }
+</style>
+
+
+<div id="msgSuccess" class="alert alert-success alert-dismissable fade">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <strong>Success!</strong> @TempData[Constant.msg_success]
+</div>
+
+<div id="msgFail" class="alert alert-danger alert-dismissable fade">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <strong>Failed!</strong> @TempData[Constant.msg_error]
+</div>
+<div class="GeneralPage">
+    <div class="container">
+        <div class="row termBox">
+            Select term to edit:
+            @if (Model.TermList.Any())
+            {
+                @Html.DropDownList("TermSelectList", new SelectList(Model.TermList, "Value", "Text", Model.SelectedTerm), new { id = "TermList" }) ;
+                <input type="submit" class="blackBtn" value="Edit" id="editForm">
+            }
+
+        </div>
+        @using (Html.BeginForm("Subject", "AdminAndSetup", FormMethod.Post))
+        {
+            <table class="table sortable border-0">
+                <thead class="thead-dark">
+                    <tr>
+                        <th class="col-md-2 text-center" colspan="2">@Constant.AdminAndSetupViewLabel.Subject.EDB_code</th>
+                        <th class="col-md-2 text-center">@Constant.AdminAndSetupViewLabel.Subject.Name_Eng</th>
+                        <th class="col-md-2 text-center">@Constant.AdminAndSetupViewLabel.Subject.Name_Chi</th>
+                        <th class="col-md-4 text-center" colspan="2">@Constant.AdminAndSetupViewLabel.Subject.SubPaper</th>
+                        <th class="col-md-1 text-center">@Constant.AdminAndSetupViewLabel.Subject.FullMark</th>
+                        <th class="col-md-1 text-center"></th>
+                    </tr>
+                </thead>
+
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true)
+                @Html.HiddenFor(model => model.SelectedTerm)
+
+                @for (int i = 0; i < Model.InactiveSubjectsList.Count; i++)
+                {
+                    @Html.HiddenFor(model => Model.InactiveSubjectsList[i])
+                }
+                @for (int i = 0; i < Model.InactiveSSubjectsList.Count; i++)
+                {
+                    @Html.HiddenFor(model => Model.InactiveSSubjectsList[i])
+                }
+
+                @for (int i = 0; i < Model.SubjectAndSSubjects.Count; i++)
+                {
+                    @Html.HiddenFor(model => Model.SubjectAndSSubjects[i].MainSubject.ID)
+                    @Html.HiddenFor(model => Model.SubjectAndSSubjects[i].MainSubject.TERM)
+                    @Html.HiddenFor(model => Model.SubjectAndSSubjects[i].MainSubject.ADD_BY)
+                    @Html.HiddenFor(model => Model.SubjectAndSSubjects[i].MainSubject.ADD_DATE)
+                    @Html.HiddenFor(model => Model.SubjectAndSSubjects[i].MainSubject.MODIFY_BY)
+                    @Html.HiddenFor(model => Model.SubjectAndSSubjects[i].MainSubject.MODIFY_DATE)
+                    @Html.HiddenFor(model => Model.SubjectAndSSubjects[i].MainSubject.ACTIVE)
+                                <tr>
+                                    <td class="col-md-1 text-left h5">
+                                        <label class="blind2">@Model.SubjectAndSSubjects[i].MainSubject.EDB_CODE</label>
+                                        @Html.EditorFor(model => Model.SubjectAndSSubjects[i].MainSubject.EDB_CODE, new { htmlAttributes = new { @class = "input-Box blind" } })
+                                    </td>
+                                    <td class="col-md-1 text-left h5"></td>
+                                    <td class="col-md-2 text-center h5">
+                                        <label class="blind2">@Model.SubjectAndSSubjects[i].MainSubject.NAME</label>
+                                        @Html.EditorFor(model => Model.SubjectAndSSubjects[i].MainSubject.NAME, new { htmlAttributes = new { @class = "input-Box blind" } })
+
+                                    </td>
+                                    <td class="col-md-2 text-center h5">
+                                        <label class="blind2">@Model.SubjectAndSSubjects[i].MainSubject.NAME_CHI</label>
+                                        @Html.EditorFor(model => Model.SubjectAndSSubjects[i].MainSubject.NAME_CHI, new { htmlAttributes = new { @class = "input-Box blind" } })
+                                    </td>
+                                    <td class="col-md-2 text-center h5"></td>
+                                    <td class="col-md-2 text-center h5"></td>
+                                    <td class="col-md-1 text-center h5">
+                                        @if (Model.SubjectAndSSubjects[i].SSubjects.Count() > 0)
+                                        {
+                                            <label>@Model.SubjectAndSSubjects[i].SSubjects.Sum(ss => ss.FULL_MARK)</label>
+                                            @Html.HiddenFor(model => Model.SubjectAndSSubjects[i].MainSubject.FULL_MARK, 0)
+                                        }
+                                        else
+                                        {
+                                            <label class="blind2">@Model.SubjectAndSSubjects[i].MainSubject.FULL_MARK</label>
+                                            @Html.EditorFor(model => Model.SubjectAndSSubjects[i].MainSubject.FULL_MARK, new { htmlAttributes = new { @class = "input-Box blind" } })
+                                        }
+                                    </td>
+                                    <td class="col-md-1 text-center"><button type="submit" class="glyphicon glyphicon-remove transparent blind" formaction="@Url.Action("InactiveSubject", "AdminAndSetup", new { id = Model.SubjectAndSSubjects[i].MainSubject.ID })" /></td>
+                                </tr>
+                                for (int j = 0; j < Model.SubjectAndSSubjects[i].SSubjects.Count; j++)
+                                {
+                                    @Html.HiddenFor(model => Model.SubjectAndSSubjects[i].SSubjects[j].ID)
+                                    @Html.HiddenFor(model => Model.SubjectAndSSubjects[i].SSubjects[j].SUBJECT)
+                                    @Html.HiddenFor(model => Model.SubjectAndSSubjects[i].SSubjects[j].ADD_BY)
+                                    @Html.HiddenFor(model => Model.SubjectAndSSubjects[i].SSubjects[j].ADD_DATE)
+                                    @Html.HiddenFor(model => Model.SubjectAndSSubjects[i].SSubjects[j].MODIFY_BY)
+                                    @Html.HiddenFor(model => Model.SubjectAndSSubjects[i].SSubjects[j].MODIFY_DATE)
+                                    @Html.HiddenFor(model => Model.SubjectAndSSubjects[i].SSubjects[j].ACTIVE)
+                                    <tr>
+                                        <td class="col-md-1 text-left h6"></td>
+                                        <td class="col-md-1 text-left h6">
+                                            <label class="blind2">@Model.SubjectAndSSubjects[i].SSubjects[j].EDB_CODE</label>
+                                            @Html.EditorFor(model => Model.SubjectAndSSubjects[i].SSubjects[j].EDB_CODE, new { htmlAttributes = new { @class = "input-Box blind" } })
+                                        </td>
+                                        <td class="col-md-2 text-center h6"></td>
+                                        <td class="col-md-2 text-center h6"></td>
+                                        <td class="col-md-2 text-center h6">
+                                            <label class="blind2">@Model.SubjectAndSSubjects[i].SSubjects[j].NAME</label>
+                                            @Html.EditorFor(model => Model.SubjectAndSSubjects[i].SSubjects[j].NAME, new { htmlAttributes = new { @class = "input-Box blind" } })
+                                        </td>
+                                        <td class="col-md-2 text-center  h6">
+                                            <label class="blind2">@Model.SubjectAndSSubjects[i].SSubjects[j].NAME_CHI</label>
+                                            @Html.EditorFor(model => Model.SubjectAndSSubjects[i].SSubjects[j].NAME_CHI, new { htmlAttributes = new { @class = "input-Box blind" } })
+                                        </td>
+                                        <td class="col-md-1 text-center  h6">
+                                            <label class="blind2">@Model.SubjectAndSSubjects[i].SSubjects[j].FULL_MARK</label>
+                                            @Html.EditorFor(model => Model.SubjectAndSSubjects[i].SSubjects[j].FULL_MARK, new { htmlAttributes = new { @class = "input-Box blind" } })
+                                        </td>
+                                        <td class="col-md-1 text-center"><button type="submit" class="glyphicon glyphicon-remove transparent blind" formaction="@Url.Action("InactiveSSubject", "AdminAndSetup", new { id = Model.SubjectAndSSubjects[i].SSubjects[j].ID, main_id = Model.SubjectAndSSubjects[i].MainSubject.ID })" /></td>
+                                    </tr>
+                                }
+                    
+                }
+            </table>
+            <table class="table blind">
+                <tr>
+                    <td class="col-md-5"></td>
+                    <td class="col-md-2">Subject: 
+                        @if (Model.SubjectList.Any())
+                        {
+                            @Html.DropDownListFor(Model => Model.SelectedSubject, Model.SubjectList, new { htmlAttributes = new { @class = "input-Box" } });
+                        }
+                    </td>
+                    <td class="col-md-5"></td>
+                </tr>
+                <tr>
+                    <td class="col-md-2">EDB CODE</td>
+                    <td class="col-md-4">Name in English</td>
+                    <td class="col-md-4">Name in Chinese</td>
+                    <td class="col-md-1">Full Marks</td>
+                    <td class="col-md-1"></td>
+                </tr>
+                <tr>
+                    @Html.HiddenFor(Model =>Model.NewSubject.ID)
+                    <td class="col-md-2">@Html.EditorFor(Model => Model.NewSubject.EDB_CODE, new { htmlAttributes = new { @class = "input-Box" } })</td>
+                    <td class="col-md-4">@Html.EditorFor(Model => Model.NewSubject.NAME, new { htmlAttributes = new { @class = "input-Box" } })</td>
+                    <td class="col-md-4">@Html.EditorFor(Model => Model.NewSubject.NAME_CHI, new { htmlAttributes = new { @class = "input-Box" } })</td>
+                    <td class="col-md-1">@Html.EditorFor(Model => Model.NewSubject.FULL_MARK, new { htmlAttributes = new { @class = "input-Box" } })</td>
+                    <td class="col-md-1"><button class="glyphicon glyphicon-plus blind transparent" formaction='@Url.Action("InsertSubject", "AdminAndSetup")'/></td>
+                </tr>
+                <tr>
+                    <td class="col-md-2">@Html.ValidationMessageFor(Model => Model.NewSubject.EDB_CODE, "", new { @class = "text-danger" })</td>
+                    <td class="col-md-4">@Html.ValidationMessageFor(Model => Model.NewSubject.NAME, "", new { @class = "text-danger" })</td>
+                    <td class="col-md-4">@Html.ValidationMessageFor(Model => Model.NewSubject.NAME_CHI, "", new { @class = "text-danger" })</td>
+                    <td class="col-md-1">@Html.ValidationMessageFor(Model => Model.NewSubject.FULL_MARK, "", new { @class = "text-danger" })</td>
+                    <td class="col-md-1"></td>
+                </tr>
+            </table>
+            <input type="submit" class="blackBtn" value="Save" id="save-btn">
+        }
+    </div>
+</div>
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="~/Scripts/sorttable/sorttable.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#editForm').show(); //check authentication
+        $('.blind2').show();
+
+        $('#editForm').click(function () {
+            $('.subjectA').toggle();
+            $('.blind').toggle();
+            $('.blind2').toggle();
+            $('#save-btn').toggle();
+        });
+
+        var showForm = '@TempData["showform"]';
+
+        if (showForm == 'True') {
+
+            $('.subjectA').show();
+            $('.blind').show();
+            $('.blind2').hide();
+            $('#save-btn').show();
+        }
+
+    });
+
+    $('#TermList').change(function () {
+        var id = $(this).val();
+        window.location.href = '@Url.Action("Subject","AdminAndSetup",new { id = "_id"})'.replace("_id", id);
+    });
+
+    var success = '@TempData[Constant.msg_success]';
+    var fail = '@TempData[Constant.msg_error]';
+
+    if (success) {
+            $("#msgSuccess").addClass("in");
+    }
+
+    if (fail) {
+        $("#msgFail").addClass("in");
+    }
+</script>

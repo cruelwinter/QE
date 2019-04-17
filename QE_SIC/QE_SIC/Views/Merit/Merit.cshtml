@@ -1,0 +1,208 @@
+﻿
+
+@using QE.Models
+@using QE.Models.ViewModels
+@model MeritsViewModel
+
+@{
+    ViewBag.Title = "Merit";
+}
+
+<style>
+    .GeneralPage {
+        min-width: 1024px;
+        min-height: 576px;
+        background-color: #f2f2f2;
+        opacity: 0.985;
+        text-align: center;
+        vertical-align: middle;
+        text-align: center;
+        vertical-align: middle;
+        padding: 10px;
+    }
+
+    .input-Box, .UserList {
+        border: 1px solid transparent;
+        padding: 2px;
+        vertical-align: middle;
+        width: 100%;
+        text-align: center;
+        text-align-last: center;
+        text-overflow: clip;
+    }
+
+    select {
+        border: none;
+        margin: 1px;
+    }
+
+    .blackBtn {
+        background-color: #777777;
+        font-weight: bold;
+        color: white;
+        border: none;
+        height: 30px;
+        width: 200px;
+        border-radius: 2px;
+        margin: 2px;
+    }
+
+    .blind {
+        display: none;
+    }
+
+    .glyphicon {
+        background: none;
+        border: none;
+        color: #777777;
+    }
+
+    .glyphicon-remove {
+        display: none;
+    }
+
+    #editForm {
+        float: right;
+    }
+
+    .fade {
+        opacity: 0;
+        display: none;
+        -webkit-transition: opacity 0.15s linear;
+        -moz-transition: opacity 0.15s linear;
+        -o-transition: opacity 0.15s linear;
+        transition: opacity 0.15s linear;
+        z-index: 1;
+    }
+
+        .fade.in {
+            opacity: 1;
+            display: block;
+        }
+</style>
+
+
+<div id="msgSuccess" class="alert alert-success alert-dismissable fade">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <strong>Success!</strong> @TempData[Constant.msg_success]
+</div>
+
+<div id="msgFail" class="alert alert-danger alert-dismissable fade">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <strong>Failed!</strong> @TempData[Constant.msg_error]
+</div>
+<div class="GeneralPage">
+    <div class="container">
+
+        <div class="row">
+            <div class="pull-left h4">
+                @using (Html.BeginForm("Merit", "Merit", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    @Html.DropDownListFor(Model => Model.selectedTerm, Model.TermList)
+                    @Html.DropDownListFor(Model => Model.selectedClass, Model.classList)
+                    <button type="submit" class="glyphicon glyphicon-search" formaction="@Url.Action("viewHomework", "Homework")" />
+                }
+            </div>
+            @*<div class="pull-right h2" style="margin-left:5px; margin-right:5px;">
+                    <label class="fa fa-file-excel-o" id="btnExport" onclick="fnExcelReport('works', 0)"></label>
+                </div>*@
+            <div class="pull-right">
+                <input type="button" class="blackBtn" value="Edit" id="editForm">
+            </div>
+        </div>
+        <p class="pull-left">*Beware! Save your changes before you go to next step</p>
+        <br /><br />
+
+        <h4 class="list-group-item-heading">@Constant.StudentViewLabel.Title.StudentGroupAndSubjects</h4>
+        <div class="list-group">
+            @if (Model.Groups != null && Model.Groups.Any())
+            {
+                for (var g = 0; g < Model.Groups.Count; g++)
+                {
+                    <a class="list-group-item" href="@Url.Action("StudentGroupAndSubjects", "STUDENT", new { term_id =Model.SelectedTerm, group_id = Model.Groups[g].ID })">
+                        <div class="row">
+                            <div class="col-md-4 text-left">@Model.Groups[g].NAME</div>
+                            @{
+                                string teacher = Model.Groups[g].TEACHER > 0 ? Model.Teachers.Where(t => t.ID == Model.Groups[g].TEACHER).First().USER_NAME : "";
+                                string teacher2 = Model.Groups[g].TEACHER_2 > 0 ? Model.Teachers.Where(t => t.ID == Model.Groups[g].TEACHER_2).First().USER_NAME : "";
+                                string teacher3 = Model.Groups[g].TEACHER_3 > 0 ? Model.Teachers.Where(t => t.ID == Model.Groups[g].TEACHER_3).First().USER_NAME : "";
+                                string teacher4 = Model.Groups[g].TEACHER_4 > 0 ? Model.Teachers.Where(t => t.ID == Model.Groups[g].TEACHER_4).First().USER_NAME : "";
+                            }
+                            <div class="col-md-2 text-left">@teacher</div>
+                            <div class="col-md-2 text-left">@teacher2</div>
+                            <div class="col-md-2 text-left">@teacher3</div>
+                            <div class="col-md-2 text-left">@teacher4</div>
+                        </div>
+                    </a>
+                                    }
+                                }
+        </div>
+    </div>
+
+    <div class="form-group col-md-4">
+        @Html.Partial("_StudentGroupAndSubjects", Model)
+    </div>
+    </div>
+</div>
+
+
+
+
+<div id="container"></div>
+<iframe id="txtArea1" style="display:none"></iframe>
+
+
+
+
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="~/Scripts/sorttable/sorttable.js"></script>
+<script src="~/Scripts/lib/picker.js"></script>
+<script src="~/Scripts/lib/picker.date.js"></script>
+<script src="~/Scripts/lib/legacy.js"></script>
+<script src="~/js/Common.tool.js"></script>
+<script>
+
+    $(document).ready(function () {
+            $('#editForm').show(); //check authentication
+
+            $('#editForm').click(function () {
+                $('.blind').toggle();
+            });
+        
+        });
+
+        var showForm = '@TempData["showform"]';
+
+        if (showForm == 'True') {
+            $('.blind').show();
+        }
+        
+    var success = '@TempData[Constant.msg_success]';
+    var fail = '@TempData[Constant.msg_error]';
+
+    if (success) {
+            $("#msgSuccess").addClass("in");
+    }
+
+    if (fail) {
+        $("#msgFail").addClass("in");
+    }
+
+
+    var $input = $('.datepicker').pickadate({
+        formatSubmit: 'yyyy/mm/dd',
+        // min: [2015, 7, 14],
+        container: '#container',
+        //editable: true,
+        closeOnSelect: true,
+        closeOnClear: false,
+    });
+
+    var picker = $input.pickadate('picker');
+
+</script>
+
+

@@ -1,0 +1,132 @@
+﻿@using QE.Models
+@using QE.Services
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul id="mainMenu" class="nav navbar-nav">
+                    <li>
+                        <div class="dropdown">
+                            <button class="btn dropdown-toggle" type="button" data-toggle="dropdown">
+                                @Constant.MenubarLabel.AdminSetup
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a href="@Url.Action("Term", "AdminAndSetup")">@Constant.AdminAndSetupViewLabel.Title.Term</a></li>
+                                <li><a href="@Url.Action("UsersAndTeachers", "AdminAndSetup")">@Constant.AdminAndSetupViewLabel.Title.Users</a></li>
+                                <li><a href="@Url.Action("Classes", "AdminAndSetup")">@Constant.AdminAndSetupViewLabel.Title.Classes</a></li>
+                                <li><a href="@Url.Action("Subject", "AdminAndSetup")">@Constant.AdminAndSetupViewLabel.Title.Subjects</a></li>
+                                <li><a href="@Url.Action("Merit", "AdminAndSetup")">@Constant.AdminAndSetupViewLabel.Title.Merit</a></li>
+                                @*<li><a href="@Url.Action("Houses", "AdminAndSetup")">@Constant.AdminAndSetupViewLabel.Title.Houses</a></li>*@
+                                <li><a href="@Url.Action("Accesses", "AdminAndSetup")">@Constant.AdminAndSetupViewLabel.Title.Accesses</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="dropdown">
+                            <button class="btn dropdown-toggle" type="button" data-toggle="dropdown">
+                                @Constant.MenubarLabel.Student
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a href="@Url.Action("Student", "Student")">@Constant.StudentViewLabel.Title.Student</a></li>
+                                <li><a href="@Url.Action("StudentGroup", "Student")">@Constant.StudentViewLabel.Title.StudentGroup</a></li>
+                                <li><a href="@Url.Action("StudentGroupAndSubjects", "Student")">@Constant.StudentViewLabel.Title.StudentGroupAndSubjects</a></li>
+                                <li><a href="@Url.Action("StudentGroupAndStudents", "Student")">@Constant.StudentViewLabel.Title.StudentGroupAndStudents</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="dropdown">
+                            <button class="btn dropdown-toggle" type="button" data-toggle="dropdown">
+                                @Constant.MenubarLabel.Homework
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a href="@Url.Action("Homework", "Homework")">@Constant.HomeworkViewLabel.Title.Homework</a></li>
+                                <li><a href="@Url.Action("HomeworkType", "Homework")">@Constant.HomeworkViewLabel.Title.HomeworkType</a></li>
+                                <li><a href="@Url.Action("HomeworkAnalysis", "Homework")">@Constant.HomeworkViewLabel.Title.HWAnalysis</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="dropdown">
+                            <button class="btn dropdown-toggle" type="button" data-toggle="dropdown">
+                                @Constant.MenubarLabel.ECA
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a href="@Url.Action("Activities", "ECA")">@Constant.ECAViewLabel.Title.Activities</a></li>
+                                <li><a href="@Url.Action("Members", "ECA")">@Constant.ECAViewLabel.Title.Members </a></li>
+                                <li><a href="@Url.Action("Notices", "ECA")">@Constant.ECAViewLabel.Title.Notices</a></li>
+                                <li><a href="@Url.Action("Reply", "ECA")">@Constant.ECAViewLabel.Title.Reply</a></li>
+                                <li><a href="@Url.Action("Attendance", "ECA")">@Constant.ECAViewLabel.Title.Attendance</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="dropdown">
+                            <button class="btn dropdown-toggle" type="button" data-toggle="dropdown">
+                                @Constant.MenubarLabel.AcademicResult
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a href="@Url.Action("AcademicResult", "AcademicResult")">@Constant.AcademicResultViewLabel.Title.AcademicResult</a></li>
+                                <li><a href="@Url.Action("Analysis", "AcademicResult")">@Constant.AcademicResultViewLabel.Title.Analysis</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="dropdown">
+                            <button class="btn dropdown-toggle" type="button" data-toggle="dropdown">
+                                @Constant.MenubarLabel.MeritDemerit
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a href="@Url.Action("Merit", "MeritDemerit")">@Constant.MeritDemeritViewLabel.Title.Merit</a></li>
+                                <li><a href="@Url.Action("Analysis", "MeritDemerit")">@Constant.MeritDemeritViewLabel.Title.Analysis</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="dropdown">
+                            <button class="btn dropdown-toggle" type="button" data-toggle="dropdown">
+                                @Constant.MenubarLabel.Account
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a href="@Url.Action("Login", "Account")">Login_Page</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    @if (ClientSessionService.IsLogined)
+                    {
+                        <li><a href="@Url.Action("Logout", "Account")"><label id="AccountLabel">@Constant.MenubarLabel.Logout</label></a></li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

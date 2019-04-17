@@ -1,0 +1,55 @@
+﻿@using QE.Models
+@using QE.Models.ViewModels
+@model GroupStudentViewModel
+
+@{
+    ViewBag.Title = "_StudentGroupAndSubjects";
+}
+
+
+<style>
+</style>
+
+@*<div class="col-md-12">*@
+    <div class="col-md-3">
+        <br /><br /><br /><br />
+        <h4 class="list-group-item-heading">@Constant.StudentViewLabel.Title.Classes</h4>
+
+        <div class="list-group">
+            @if (Model != null && Model.Classes.Any())
+            {
+                for (int c = 0; c < Model.Classes.Count; c++)
+                {
+                    <a class="list-group-item" href="@Url.Action("_StudentGroupAndStudents", "STUDENT", new { term_id =Model.SelectedTerm, group_id = Model.SelectedGroup, class_id = Model.Classes[c].ID })">
+                        @Html.DisplayFor(Model => Model.Classes[c].FORM)    
+                        @Html.DisplayFor(Model => Model.Classes[c].NAME)
+                    </a>
+                }
+            }
+        </div>
+    </div>
+    <div class="col-md-9">
+        @Html.Partial("__StudentGroupAndStudents", Model)
+    </div>
+@*</div>*@
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script>
+
+    </script>
+
+
+
+

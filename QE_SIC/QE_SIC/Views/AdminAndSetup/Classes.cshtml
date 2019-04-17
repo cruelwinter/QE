@@ -1,0 +1,219 @@
+﻿@using QE.Models
+@using QE.Models.ViewModels
+@model ClassViewModel
+
+<style>
+    .GeneralPage {
+        min-width: 1024px;
+        min-height: 576px;
+        background-color: #f2f2f2;
+        opacity: 0.985;
+        text-align: center;
+        vertical-align: middle;
+        text-align: center;
+        vertical-align: middle;
+        padding: 10px;
+    }
+
+    .blind {
+        display: none;
+    }
+
+
+    .input-Box, .UserList {
+        border: 1px solid transparent;
+        padding: 2px;
+        vertical-align: middle;
+        width: 100%;
+        min-width: 100%;
+        text-align: center;
+        text-align-last: center;
+        text-overflow: clip;
+    }
+
+    .blackBtn {
+        background-color: #777777;
+        font-weight: bold;
+        color: white;
+        border: none;
+        height: 30px;
+        width: 200px;
+        border-radius: 2px;
+        margin: 2px;
+    }
+
+    .glyphicon {
+        background: none;
+        border: none;
+        color: #777777;
+    }
+
+    .ClassName {
+        max-width: 50% !important;
+        min-width: 20% !important;
+    }
+
+    .termBox {
+        margin: 10px;
+        text-align: left;
+        font-weight: bold;
+        color: #5b5b5b;
+    }
+
+        .termBox select {
+            border-radius: 2px;
+            color: #5b5b5b;
+        }
+
+    .fade {
+        opacity: 0;
+        display: none;
+        -webkit-transition: opacity 0.15s linear;
+        -moz-transition: opacity 0.15s linear;
+        -o-transition: opacity 0.15s linear;
+        transition: opacity 0.15s linear;
+        z-index: 1;
+    }
+
+        .fade.in {
+            opacity: 1;
+            display: block;
+        }
+</style>
+
+<div id="msgSuccess" class="alert alert-success alert-dismissable fade">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <strong>Success!</strong> @TempData[Constant.msg_success]
+</div>
+
+<div id="msgFail" class="alert alert-danger alert-dismissable fade">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <strong>Failed!</strong> @TempData[Constant.msg_error]
+</div>
+<div class="GeneralPage">
+    <div class="container">
+        <div class="row termBox">
+            Select term to edit:
+            @if (Model.TermList != null && Model.TermList.Any())
+            {
+                @Html.DropDownListFor(Model => Model.SelectedTerm, Model.TermList, new { id = "TermList" });
+                <input type="submit" class="blackBtn pull-right" value="Edit" id="EditButton">
+            }
+
+        </div>
+        @using (Html.BeginForm("Classes", "AdminAndSetup", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true)
+
+            for (int i = 0; i < Model.inactiveList.Count; i++)
+            {
+                @Html.HiddenFor(Model => Model.inactiveList[i])
+            }
+            @Html.HiddenFor(Model => Model.SelectedTerm)
+
+            <table class="table sortable">
+                <tr>
+                    <th class="col-md-1 text-center text-nowrap">Class</th>
+                    <th class="col-md-4 text-center text-nowrap">TEACHER</th>
+                    <th class="col-md-4 text-center text-nowrap">TEACHER 2</th>
+                    <th class="col-md-2 text-center text-nowrap">CLASSROOM</th>
+                    <th class="col-md-1 text-center text-nowrap"></th>
+                </tr>
+                @if (Model.classes != null)
+                {
+                    for (int c = 0; c < Model.classes.Count; c++)
+                    {
+                        <tr>
+                            @Html.HiddenFor(Model => Model.classes[c].ID)
+                            @Html.HiddenFor(Model => Model.classes[c].FORM)
+                            @Html.HiddenFor(Model => Model.classes[c].NAME)
+                            @Html.HiddenFor(Model => Model.classes[c].TEACHER)
+                            @Html.HiddenFor(Model => Model.classes[c].TEACHER_2)
+                            @Html.HiddenFor(Model => Model.classes[c].TERM)
+                            @Html.HiddenFor(Model => Model.classes[c].CLASSROOM)
+                            @Html.HiddenFor(Model => Model.classes[c].teacher_name)
+                            @Html.HiddenFor(Model => Model.classes[c].teacher_2_name)
+                            @Html.HiddenFor(Model => Model.classes[c].ADD_BY)
+                            @Html.HiddenFor(Model => Model.classes[c].ADD_DATE)
+                            @Html.HiddenFor(Model => Model.classes[c].MODIFY_BY)
+                            @Html.HiddenFor(Model => Model.classes[c].MODIFY_DATE)
+                            @Html.HiddenFor(Model => Model.classes[c].ACTIVE)
+
+                            <td class="col-md-1 text-center text-nowrap">@Html.DisplayFor(Model => Model.classes[c].FORM)@Html.DisplayFor(Model => Model.classes[c].NAME)</td>
+                            <td class="col-md-4 text-center text-nowrap">@Html.DisplayFor(Model => Model.classes[c].teacher_name)</td>
+                            <td class="col-md-4 text-center text-nowrap">@Html.DisplayFor(Model => Model.classes[c].teacher_2_name)</td>
+                            <td class="col-md-2 text-center text-nowrap">@Html.DisplayFor(Model => Model.classes[c].CLASSROOM)</td>
+                            <td class="col-md-1 text-center"><button type="submit" class="glyphicon glyphicon-remove blind" formaction="@Url.Action("InactiveClass", "AdminAndSetup", new { id = Model.classes[c].ID })" /></td>
+                        </tr>
+                    }
+                }
+                <tr class="blind">
+
+                    @Html.HiddenFor(Model => Model.newClass.ID)
+                    @Html.HiddenFor(Model => Model.newClass.TERM)
+                    @Html.HiddenFor(Model => Model.newClass.ADD_BY)
+                    @Html.HiddenFor(Model => Model.newClass.ADD_DATE)
+                    @Html.HiddenFor(Model => Model.newClass.MODIFY_BY)
+                    @Html.HiddenFor(Model => Model.newClass.MODIFY_DATE)
+                    @Html.HiddenFor(Model => Model.newClass.ACTIVE)
+
+                    <td class="col-md-1 text-center text-nowrap">@Html.EditorFor(Model => Model.newClass.FORM, new { htmlAttributes = new { @class = "input-Box ClassName" } })@Html.EditorFor(Model => Model.newClass.NAME, new { htmlAttributes = new { @class = "input-Box ClassName" } })</td>
+                    <td class="col-md-4 text-center text-nowrap">@Html.DropDownListFor(Model => Model.newClass.TEACHER, Model.teachers, new { @class = "UserList" })</td>
+                    <td class="col-md-4 text-center text-nowrap">@Html.DropDownListFor(Model => Model.newClass.TEACHER_2, Model.teachers, new { @class = "UserList" })</td>
+                    <td class="col-md-2 text-center text-nowrap">@Html.EditorFor(Model => Model.newClass.CLASSROOM, new { htmlAttributes = new { @class = "input-Box" } })</td>
+                    <td class="col-md-1 text-center"><button type="submit" class="glyphicon glyphicon-plus" formaction="@Url.Action("AddClass", "AdminAndSetup")" /></td>
+                </tr>
+
+            </table>
+            <input type="submit" class="blackBtn blind" value="Save" id="save-btn">
+        }
+    </div>
+</div>
+
+
+
+
+
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script src="~/Scripts/sorttable/sorttable.js"></script>
+<script>
+    $('#EditButton').show(); //check authentication
+
+
+    $('#EditButton').click(function () {
+        $('.blind').toggle();
+    });
+
+    var showForm = '@TempData["showform"]';
+    if (showForm == 'True') {
+        $('.blind').show();
+    }
+
+    $('#TermList').change(function () {
+        var termid = $(this).val();
+        var parm = window.location.pathname;
+        var url = window.location.href;
+        if (parm != null) {
+            url = url.split('?')[0];
+        }
+        window.location.href = url + "?id=" + termid;
+    });
+
+    var success = '@TempData[Constant.msg_success]';
+    var fail = '@TempData[Constant.msg_error]';
+
+    if (success) {
+            $("#msgSuccess").addClass("in");
+    }
+
+    if (fail) {
+        $("#msgFail").addClass("in");
+    }
+
+
+    $(document).ready(function () {
+
+
+    });
+</script>

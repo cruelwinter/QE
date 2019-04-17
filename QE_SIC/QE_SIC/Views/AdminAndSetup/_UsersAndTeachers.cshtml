@@ -1,0 +1,175 @@
+﻿
+@using QE.Models
+@model QE.Models.QE_USER
+
+@{
+    ViewBag.Title = "AdminAndSetup";
+    string photoPath = string.IsNullOrEmpty(Model.PHOTO_PATH) ? string.Format("{0}{1}", @Constant.IMGPATH, "AddPic.png") : Model.PHOTO_PATH;
+}
+
+<style>
+    .wrongInputMsg {
+        color: red;
+        display: none
+    }
+
+    .AdminSetup_UserTeacher_RightPart {
+        width: 1050px;
+        height: 600px;
+        margin-left: 50px;
+    }
+
+        .AdminSetup_UserTeacher_RightPart form table {
+            width: 100%;
+            height: 100%;
+        }
+
+            .AdminSetup_UserTeacher_RightPart form table tr:first-child td h4 {
+                background-color: transparent;
+                color: #404040;
+                text-align: start;
+            }
+
+            .AdminSetup_UserTeacher_RightPart form table tr:nth-child(2) td:first-child {
+                width: 350px;
+                padding: 0;
+            }
+
+                .AdminSetup_UserTeacher_RightPart form table tr:nth-child(2) td:first-child p {
+                    width: 350px;
+                }
+
+                .AdminSetup_UserTeacher_RightPart form table tr:nth-child(2) td:first-child input[type=submit] {
+                    margin-top: 20px;
+                }
+
+    .AddPicDiv {
+        width: 250px;
+        height: 300px;
+        margin: auto;
+    }
+
+        .AddPicDiv label {
+            width: inherit;
+            height: inherit;
+        }
+
+            .AddPicDiv label img {
+                width: inherit;
+                height: inherit;
+            }
+
+    .blackBtn {
+        background-color: #777777;
+        font-weight: bold;
+        color: white;
+        border: none;
+        height: 30px;
+        width: 200px;
+        border-radius: 2px;
+        margin: 2px;
+    }
+
+    .ut-form-control {
+        width: 250px;
+        height: 30px;
+        background-color: #ffffff;
+        border: 1px solid #cccccc;
+        border-radius: 4px;
+        padding-left: 4px;
+        vertical-align: middle;
+    }
+</style>
+
+<div class="col-md-12">
+    @using (Html.BeginForm("UsersAndTeachers", "AdminAndSetup", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+
+        @*if (Model.ID == Constant.DEF_INT)
+            {
+                <label>Create user</label>
+            }
+            else
+            {
+                <label>Edit user</label>
+            }*@
+
+        @Html.HiddenFor(model => model.ID)
+        <div class="row">
+            <div class="col-md-4">
+                <div class="AddPicDiv">
+                    <label for="photoUpload">
+                        <img class="img-thumbnail" src='@photoPath' id="profilePic" />
+                    </label>
+                    <input type="file" name="file" id="photoUpload" style="display:none" onchange="reloadPic(event)" />
+                </div>
+                <p>Supported file type: png / jpg / jpeg / bmp</p>
+                <input type="submit" value="@Constant.CommonLabel.Save" class="blackBtn" /><br />
+                <input type="button" onclick="location.href='@Url.Action("InactiveUser", "AdminAndSetup")?id=@Model.ID'" value="@Constant.CommonLabel.Delete" class="blackBtn" />
+            </div>
+            <div class="col-md-8" style="text-align:left">
+                <div class="row">
+                </div>
+                <div class="form-group">
+                    @Constant.AdminAndSetupViewLabel.UsersAndTeachers.ID
+                    @Html.EditorFor(model => model.USER_ID, new { htmlAttributes = new { @class = "ut-form-control" } })
+                    @Html.ValidationMessageFor(model => model.USER_ID, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Constant.AdminAndSetupViewLabel.UsersAndTeachers.NameEng:
+                    @Html.EditorFor(model => model.USER_NAME, new { htmlAttributes = new { @class = "ut-form-control" } })
+                    @Html.ValidationMessageFor(model => model.USER_NAME, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Constant.AdminAndSetupViewLabel.UsersAndTeachers.NameChi:
+                    @Html.EditorFor(model => model.USER_NAME_CHI, new { htmlAttributes = new { @class = "ut-form-control" } })
+                    @Html.ValidationMessageFor(model => model.USER_NAME_CHI, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Constant.TeacherLabel.Position:
+                    @Html.EditorFor(model => model.POSITION, new { htmlAttributes = new { @class = "ut-form-control" } })
+                    @Html.ValidationMessageFor(model => model.POSITION, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Constant.TeacherLabel.Phone:
+                    @Html.EditorFor(model => model.PHONE, new { htmlAttributes = new { @class = "ut-form-control" } })
+                    @Html.ValidationMessageFor(model => model.PHONE, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Constant.AdminAndSetupViewLabel.UsersAndTeachers.Phone2:
+                    @Html.EditorFor(model => model.PHONE_2, new { htmlAttributes = new { @class = "ut-form-control" } })
+                    @Html.ValidationMessageFor(model => model.PHONE_2, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Constant.TeacherLabel.Email:
+                    @Html.EditorFor(model => model.EMAIL, new { htmlAttributes = new { @class = "ut-form-control" } })
+                    @Html.ValidationMessageFor(model => model.EMAIL, "", new { @class = "text-danger" })
+                    <br>@Constant.AdminAndSetupViewLabel.UsersAndTeachers.EmailMsg
+                </div>
+                <div class="form-group">
+                    @Constant.AdminAndSetupViewLabel.UsersAndTeachers.Email2:
+                    @Html.EditorFor(model => model.EMAIL_2, new { htmlAttributes = new { @class = "ut-form-control" } })
+                    @Html.ValidationMessageFor(model => model.EMAIL_2, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+    }
+
+
+</div>
+
+
+@*<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script>
+        var reloadPic = function (event) {
+            var reader = new FileReader();
+            reader.onload = function () {
+                var output = document.getElementById('profilePic');
+
+                output.src = reader.result;
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    </script>*@

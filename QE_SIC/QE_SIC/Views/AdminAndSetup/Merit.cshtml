@@ -1,0 +1,201 @@
+﻿
+@using QE.Models
+@using QE.Models.ViewModels
+@model MeritViewModel
+
+@{
+    ViewBag.Title = "Merit";
+}
+
+<style>
+    .GeneralPage {
+        min-width: 1024px;
+        min-height: 576px;
+        background-color: #f2f2f2;
+        opacity: 0.985;
+        text-align: center;
+        vertical-align: middle;
+        text-align: center;
+        vertical-align: middle;
+        padding: 10px;
+    }
+
+
+    .input-Box {
+        border: 1px solid transparent;
+        padding: 2px;
+        vertical-align: middle;
+        width: 100%;
+        min-width: 100%;
+        text-align: center;
+        text-align-last: center;
+        text-overflow: clip;
+    }
+
+
+    .blackBtn {
+        background-color: #777777;
+        font-weight: bold;
+        color: white;
+        border: none;
+        height: 30px;
+        width: 200px;
+        border-radius: 2px;
+        margin: 2px;
+        display: none;
+    }
+
+
+    #editForm {
+        float: right;
+    }
+
+    .customButton {
+        background: none;
+        border: none;
+    }
+
+    .blind {
+        display: none;
+    }
+
+    .fade {
+        opacity: 0;
+        display: none;
+        -webkit-transition: opacity 0.15s linear;
+        -moz-transition: opacity 0.15s linear;
+        -o-transition: opacity 0.15s linear;
+        transition: opacity 0.15s linear;
+        z-index: 1;
+    }
+
+        .fade.in {
+            opacity: 1;
+            display: block;
+        }
+</style>
+
+
+<div id="msgSuccess" class="alert alert-success alert-dismissable fade">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <strong>Success!</strong> @TempData[Constant.msg_success]
+</div>
+
+<div id="msgFail" class="alert alert-danger alert-dismissable fade">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <strong>Failed!</strong> @TempData[Constant.msg_error]
+</div>
+<div class="GeneralPage">
+    <div class="container">
+        <div class="row termBox">
+            <input type="submit" class="blackBtn Btn_right" value="Edit" id="editForm">
+        </div>
+        @using (Html.BeginForm("Merit", "AdminAndSetup", FormMethod.Post))
+        {
+            <table class="table sortable" id="type">
+                <tr>
+                    <th class="col-md-4 text-center">@Constant.AdminAndSetupViewLabel.Merit.Name</th>
+                    <th class="col-md-4 text-center">@Constant.AdminAndSetupViewLabel.Merit.Name_chi</th>
+                    <th class="col-md-1 text-center">@Constant.AdminAndSetupViewLabel.Merit.Points</th>
+                    <th class="col-md-2 text-center">@Constant.AdminAndSetupViewLabel.Merit.Demerit</th>
+                    <th class="col-md-1 text-center"></th>
+                </tr>
+
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true)
+
+                @for (int i = 0; i < Model.removeList.Count; i++)
+                {
+                    @Html.HiddenFor(model => model.removeList[i])
+                }
+
+                @if (Model.merits != null)
+                {
+                    for (int i = 0; i < Model.merits.Count; i++)
+                    {
+                        @Html.HiddenFor(model => model.merits[i].ID)
+                        <tr>
+                            <td class="col-md-4">
+                                <label class="blind2">@Model.merits[i].NAME</label>
+                                @Html.EditorFor(model => model.merits[i].NAME, new { htmlAttributes = new { @class = "input-Box blind" } })
+                            </td>
+                            <td class="col-md-4">
+                                <label class="blind2">@Model.merits[i].NAME_CHI</label>
+                                @Html.EditorFor(model => model.merits[i].NAME_CHI, new { htmlAttributes = new { @class = "input-Box blind" } })
+                            </td>
+                            <td class="col-md-1">
+                                <label class="blind2">@Model.merits[i].POINTS</label>
+                                @Html.EditorFor(model => model.merits[i].POINTS, new { htmlAttributes = new { @class = "input-Box blind" } })
+                            </td>
+                            <td class="col-md-2">
+                                @{ string label = ""; if (Model.merits[i].DEMERIT) { label = "Demerit"; } else { label = "Merit"; }
+                                }
+                                <label class="blind2">@label</label>
+                                <div class="blind">
+                                    @Html.CheckBoxFor(model => model.merits[i].DEMERIT) Demerit?
+                                </div>
+                            </td>
+                            <td class="col-md-1"><button type="submit" class="glyphicon glyphicon-remove blind customButton" formaction="@Url.Action("removeMerit", "AdminAndSetup", new { id = Model.merits[i].ID })" /></td>
+                        </tr>
+                    }
+                }
+            </table>
+            <table class="table blind">
+                @Html.HiddenFor(model => model.newMerit.ID)
+                <tr>
+                    <td class="col-md-4">@Html.EditorFor(model => model.newMerit.NAME, new { htmlAttributes = new { @class = "input-Box" } })</td>
+                    <td class="col-md-4">@Html.EditorFor(model => model.newMerit.NAME_CHI, new { htmlAttributes = new { @class = "input-Box" } })</td>
+                    <td class="col-md-1">@Html.EditorFor(model => model.newMerit.POINTS, new { htmlAttributes = new { @class = "input-Box" } })</td>
+                    <td class="col-md-2">@Html.CheckBoxFor(model => model.newMerit.DEMERIT) Demerit?</td>
+                    <td class="col-md-1"><button type="submit" class="glyphicon glyphicon-plus blind customButton" formaction='@Url.Action("addMerit", "AdminAndSetup")' /></td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">@Html.ValidationMessageFor(model => model.newMerit.NAME, "", new { @class = "text-danger" })</td>
+                    <td class="col-md-4">@Html.ValidationMessageFor(model => model.newMerit.NAME_CHI, "", new { @class = "text-danger" })</td>
+                    <td class="col-md-1">@Html.ValidationMessageFor(model => model.newMerit.POINTS, "", new { @class = "text-danger" })</td>
+                    <td class="col-md-2"></td>
+                    <td class="col-md-1"></td>
+                </tr>
+            </table>
+            <input type="submit" class="blackBtn blind" value="Save" id="save-btn">
+        }
+    </div>
+</div>
+
+
+
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script src="~/Scripts/sorttable/sorttable.js"></script>
+<script src="~/js/Common.tool.js"></script>
+<script>
+    $('#editForm').show(); //check authentication
+
+    $('#editForm').click(function () {
+        $('.blind').toggle();
+        $('.blind2').toggle();
+
+    });
+
+    var showForm = '@TempData["showform"]';
+
+    if (showForm == 'True') {
+        $('.blind').show();
+        $('.blind2').hide();
+    }
+
+
+    var success = '@TempData[Constant.msg_success]';
+    var fail = '@TempData[Constant.msg_error]';
+
+    if (success) {
+            $("#msgSuccess").addClass("in");
+    }
+
+    if (fail) {
+        $("#msgFail").addClass("in");
+    }
+    $(document).ready(function () {
+
+    });
+</script>
+

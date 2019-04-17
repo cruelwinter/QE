@@ -1,0 +1,82 @@
+﻿@using QE.Models
+
+@model QE.Models.TERM
+
+
+<link rel="stylesheet" href="~/Scripts/lib/themes/default.css">
+<link rel="stylesheet" href="~/Scripts/lib/themes/default.date.css">
+
+<style>
+    .term {
+        display: inline-block;
+        line-height: normal;
+        vertical-align: middle;
+    }
+
+    .blackBtn {
+        background-color: #777777;
+        font-weight: bold;
+        color: white;
+        border: none;
+        height: 30px;
+        width: 200px;
+        border-radius: 2px;
+        margin: 2px;
+        display: inline-block;
+        line-height: normal;
+        vertical-align: middle;
+    }
+</style>
+
+<div class="term">
+    @using (Html.BeginForm("Term", "AdminAndSetup", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+
+        @Html.HiddenFor(model => model.ID)
+        @Html.HiddenFor(model => model.ACTIVE)
+
+        <div class="form-group">
+            Name:
+            @Html.EditorFor(model => model.TERM_NAME, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.TERM_NAME, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            From:
+            @Html.TextBoxFor(model => model.TERM_START, "{0:yyyy-MM-dd}", new { @class = "form-control datepicker" })
+            @Html.ValidationMessageFor(model => model.TERM_START, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            To:
+            @Html.TextBoxFor(model => model.TERM_END, "{0:yyyy-MM-dd}", new { @class = "form-control datepicker" })
+            @ViewData[Constant.msg_error]
+        </div>
+
+
+        <input type="submit" class="blackBtn" value="OK" />
+
+    }
+</div>
+
+<div id="container"></div>
+
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script src="~/Scripts/lib/picker.js"></script>
+<script src="~/Scripts/lib/picker.date.js"></script>
+<script src="~/Scripts/lib/legacy.js"></script>
+<script>
+    var $input = $('.datepicker').pickadate({
+        formatSubmit: 'yyyy/mm/dd',
+        // min: [2015, 7, 14],
+        container: '#container',
+        // editable: true,
+        closeOnSelect: true,
+        closeOnClear: false,
+    })
+
+
+    var picker = $input.pickadate('picker')
+</script>

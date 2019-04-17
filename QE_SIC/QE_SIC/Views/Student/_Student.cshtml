@@ -1,0 +1,133 @@
+﻿@using QE.Models.ViewModels
+@using QE.Models
+@model _StudentViewModel
+
+@{
+    ViewBag.Title = "_Student";
+    }
+
+<style>
+    .GeneralPage {
+        min-width: 1024px;
+        min-height: 576px;
+        background-color: #f2f2f2;
+        opacity: 0.9;
+        text-align: center;
+        vertical-align: middle;
+        text-align: center;
+        vertical-align: middle;
+        padding: 10px;
+    }
+
+    .utSearchBar {
+        background-color: white;
+        width: inherit;
+        height: 50px;
+        text-align: center;
+        line-height: 50px;
+        cursor: pointer;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .GeneralListView {
+        width: inherit;
+        height: inherit;
+    }
+
+    .GeneralListViewList {
+        height: 25%;
+        width: 10%;
+        border: 1px solid black;
+    }
+
+    .GeneralListViewPartial {
+        height: 50%;
+        width: 50%;
+        border: 1px solid black;
+    }
+
+    .blackBtn {
+        background-color: #777777;
+        font-weight: bold;
+        color: white;
+        border: none;
+        height: 30px;
+        width: 200px;
+        border-radius: 2px;
+        margin: 2px;
+    }
+
+    .container {
+        margin-left: 10px;
+        margin-right: 10px;
+        width:100%;
+        max-width:100%
+    }
+
+
+    .fade {
+        opacity: 0;
+        display: none;
+        -webkit-transition: opacity 0.15s linear;
+        -moz-transition: opacity 0.15s linear;
+        -o-transition: opacity 0.15s linear;
+        transition: opacity 0.15s linear;
+        z-index: 1;
+    }
+
+        .fade.in {
+            opacity: 1;
+            display: block;
+        }
+</style>
+
+<div id="msgSuccess" class="alert alert-success alert-dismissable fade">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <strong>Success!</strong> @TempData[Constant.msg_success]
+</div>
+
+<div id="msgFail" class="alert alert-danger alert-dismissable fade">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <strong>Failed!</strong> @TempData[Constant.msg_error]
+</div>
+<div class="GeneralPage">
+    @*<div class="utSearchBar">
+        <img src="@Constant.IMGPATH@Constant.LogoImgPath.SearchIcon" /> @Constant.CommonLabel.Search
+    </div>*@
+
+    <div class="container">
+        <div class="form-group col-md-3">
+            <div class="list-group">
+                <h4 class="list-group-item-heading">@Constant.StudentViewLabel.Title.Student</h4>
+                @if (Model.studentList != null)
+                {
+                    foreach (var student in Model.studentList)
+                    {
+                        <a class="list-group-item" href="@Url.Action("_STUDENT", "STUDENT", new { class_id = Model.selectedClass, student_id = student.ID, term_id = Model.selectedTerm})">@Html.DisplayFor(model => student.STUDENT_NAME)&nbsp;@Html.DisplayFor(model => student.STUDENT_NAME_CHI)</a>
+                    }
+                }
+                <a href="@Url.Action("_Student", "Student", new {  Class_id = Model.selectedClass,  student_id = Constant.DEF_INT, term_id = Model.selectedTerm})" class="list-group-item">@Constant.StudentViewLabel.Admission.AddNewStudent</a>
+            </div>
+        </div>
+        <div class="form-group col-md-9">
+            @Html.Partial("__STUDENT", Model)
+        </div>
+    </div>
+</div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+
+    var success = '@TempData[Constant.msg_success]';
+    var fail = '@TempData[Constant.msg_error]';
+
+    if (success) {
+            $("#msgSuccess").addClass("in");
+    }
+
+    if (fail) {
+        $("#msgFail").addClass("in");
+    }
+</script>

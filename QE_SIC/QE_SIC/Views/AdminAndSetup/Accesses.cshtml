@@ -1,0 +1,228 @@
+﻿@using QE.Models
+@using QE.Models.ViewModels
+@model AccessViewModel
+
+<style>
+    .GeneralPage {
+        min-width: 1024px;
+        min-height: 576px;
+        background-color: #f2f2f2;
+        opacity: 0.985;
+        text-align: center;
+        vertical-align: middle;
+        text-align: center;
+        vertical-align: middle;
+        padding: 10px;
+    }
+
+    .blind, .blind2, .blind3 {
+        display: none;
+    }
+
+    .blackBtn {
+        background-color: #777777;
+        font-weight: bold;
+        color: white;
+        border: none;
+        height: 30px;
+        width: 200px;
+        border-radius: 2px;
+        margin: 2px;
+    }
+
+    .W80 {
+        width: 80%;
+    }
+
+    .transparent {
+        background: none;
+        border: none;
+        color: #777777;
+    }
+
+    .fade {
+        opacity: 0;
+        display: none;
+        -webkit-transition: opacity 0.15s linear;
+        -moz-transition: opacity 0.15s linear;
+        -o-transition: opacity 0.15s linear;
+        transition: opacity 0.15s linear;
+        z-index: 1;
+    }
+
+        .fade.in {
+            opacity: 1;
+            display: block;
+        }
+</style>
+
+<div id="msgSuccess" class="alert alert-success alert-dismissable fade">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <strong>Success!</strong> @TempData[Constant.msg_success]
+</div>
+
+<div id="msgFail" class="alert alert-danger alert-dismissable fade">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <strong>Failed!</strong> @TempData[Constant.msg_error]
+</div>
+<div class="GeneralPage">
+    <div class="container">
+        <div class="row">
+            <input type="submit" class="blackBtn pull-left" value="Edit" id="EditButton" />
+            <input type="submit" class="blackBtn pull-right" value="Edit" id="EditButton2" />
+        </div>
+        @using (Html.BeginForm("Accesses", "AdminAndSetup", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <div class="row">
+                <input type="submit" class="blackBtn blind3 pull-left" value="Save" id="save-btn">
+                <input type="submit" class="blackBtn blind2 pull-right" value="Save" id="save-btn">
+            </div>
+            <br />
+            <div class="row">
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true)
+
+                @for (int i = 0; i < Model.inactiveList.Count; i++)
+                {
+                    @Html.HiddenFor(Model => Model.inactiveList[i])
+                }
+
+                @Html.HiddenFor(Model => Model.SelectedGroup)
+
+                <div class="col-md-3">
+                    <h4 class="list-group-item-heading">@Constant.AdminAndSetupViewLabel.Accesses.UserGroup</h4>
+                    <div class="list-group">
+                        @if (Model.group != null && Model.group.Any())
+                        {
+                            for (var g = 0; g < Model.group.Count; g++)
+                            {
+                                @Html.HiddenFor(Model => Model.group[g].ID)
+                                @Html.HiddenFor(Model => Model.group[g].NAME)
+                                @Html.HiddenFor(Model => Model.group[g].ADD_BY)
+                                @Html.HiddenFor(Model => Model.group[g].ADD_DATE)
+                                @Html.HiddenFor(Model => Model.group[g].MODIFY_BY)
+                                @Html.HiddenFor(Model => Model.group[g].MODIFY_DATE)
+                                <div class="list-group-item">
+                                    <input type="submit" class="transparent W80" formaction="@Url.Action("_Accesses", "AdminAndSetup", new { group_id = Model.group[g].ID })" value="@Model.group[g].NAME" /><button type="submit" class="glyphicon glyphicon-remove transparent blind pull-right" formaction="@Url.Action("RemoveGroup", "AdminAndSetup", new { group_id = Model.group[g].ID })" />
+                                </div>
+                            }
+                        }
+                        @Html.HiddenFor(Model => Model.newGroup.ID)
+                        @Html.HiddenFor(Model => Model.newGroup.ADD_BY)
+                        @Html.HiddenFor(Model => Model.newGroup.ADD_DATE)
+                        @Html.HiddenFor(Model => Model.newGroup.MODIFY_BY)
+                        @Html.HiddenFor(Model => Model.newGroup.MODIFY_DATE)
+                        <div class="list-group-item blind">@Html.EditorFor(Model => Model.newGroup.NAME, new { htmlAttributes = new { @class = "W80" } })<button type="submit" class="glyphicon glyphicon-plus transparent pull-right" formaction="@Url.Action("AddGroup", "AdminAndSetup")" /></div>
+                    </div>
+                </div>
+                <div class="col-md-1"></div>
+                <div class="col-md-4">
+                    @if (Model.groupRights != null && Model.groupRights.Any())
+                    {
+                        <h4 class="list-group-item-heading">@Constant.AdminAndSetupViewLabel.Accesses.GroupRights</h4>
+                        <table class="table">
+                            <tr>
+                                <th class="col-md-6 text-left">Right</th>
+                                <th class="col-md-3 text-center">Read</th>
+                                <th class="col-md-3 text-center">Write</th>
+                            </tr>
+                            @for (int r = 0; r < Model.groupRights.Count; r++)
+                            {
+                                <tr>
+                                    @Html.HiddenFor(Model => Model.groupRights[r].ID)
+                                    @Html.HiddenFor(Model => Model.groupRights[r].RIGHT_NAME)
+                                    @Html.HiddenFor(Model => Model.groupRights[r].RIGHT_ID)
+                                    @Html.HiddenFor(Model => Model.groupRights[r].Right_1_level)
+                                    @Html.HiddenFor(Model => Model.groupRights[r].Right_2_level)
+                                    @Html.HiddenFor(Model => Model.groupRights[r].Right_3_level)
+                                    @Html.HiddenFor(Model => Model.groupRights[r].Right_4_level)
+                                    @Html.HiddenFor(Model => Model.groupRights[r].USER_GROUP)
+                                    @Html.HiddenFor(Model => Model.groupRights[r].ADD_BY)
+                                    @Html.HiddenFor(Model => Model.groupRights[r].ADD_DATE)
+                                    @Html.HiddenFor(Model => Model.groupRights[r].MODIFY_BY)
+                                    @Html.HiddenFor(Model => Model.groupRights[r].MODIFY_DATE)
+                                    <td class="col-md-6 text-left">@Html.DisplayFor(Model => Model.groupRights[r].RIGHT_NAME)</td>
+                                    <td class="col-md-3 text-center">@Html.CheckBoxFor(Model => Model.groupRights[r].R)</td>
+                                    <td class="col-md-3 text-center">@Html.CheckBoxFor(Model => Model.groupRights[r].W)</td>
+                                </tr>
+                            }
+                        </table>
+                    }
+                </div>
+                <div class="col-md-1"></div>
+                <div class="col-md-3">
+                    @if (Model.groupUserlist != null && Model.groupUserlist.Any())
+                    {
+                        <h4 class="list-group-item-heading">@Constant.AdminAndSetupViewLabel.Accesses.GroupUsers</h4>
+                        <div class="list-group">
+                            @for (int u = 0; u < Model.groupUserlist.Count; u++)
+                            {
+                                <div class="list-group-item">
+                                    @Html.DisplayFor(Model => Model.groupUserlist[u].user_name)
+                                    @Html.CheckBoxFor(Model => Model.groupUserlist[u].contain)
+                                    @Html.HiddenFor(Model => Model.groupUserlist[u].ID)
+                                    @Html.HiddenFor(Model => Model.groupUserlist[u].QE_USER)
+                                    @Html.HiddenFor(Model => Model.groupUserlist[u].USER_GROUP)
+                                    @Html.HiddenFor(Model => Model.groupUserlist[u].user_name)
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script src="~/Scripts/sorttable/sorttable.js"></script>
+<script>
+
+
+    $('#EditButton').show(); //check authentication
+    $('#EditButton2').show(); //check authentication
+
+
+    $('#EditButton').click(function () {
+        $('.blind').toggle(); // group remove and add icons
+        $('.blind2').hide(); //others save button
+        $('.blind3').toggle(); //group save button
+    });
+
+    $('#EditButton2').click(function () {
+        $('.blind').hide(); // group remove and add icons
+        $('.blind2').toggle(); //others save button
+        $('.blind3').hide(); //group save button
+    });
+
+    var showForm = '@TempData["showform"]';
+    if (showForm == 'True') {
+        $('.blind').show();
+    }
+
+    var success = '@TempData[Constant.msg_success]';
+    var fail = '@TempData[Constant.msg_error]';
+
+    if (success) {
+            $("#msgSuccess").addClass("in");
+    }
+
+    if (fail) {
+        $("#msgFail").addClass("in");
+    }
+
+    $(document).ready(function () {
+    });
+</script>

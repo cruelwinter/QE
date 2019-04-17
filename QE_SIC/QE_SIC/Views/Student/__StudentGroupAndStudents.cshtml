@@ -1,0 +1,89 @@
+﻿@using QE.Models
+@using QE.Models.ViewModels
+@model GroupStudentViewModel
+
+@{
+    ViewBag.Title = "_StudentGroupAndSubjects";
+}
+
+
+<style>
+
+    .blackBtn {
+        background-color: #777777;
+        font-weight: bold;
+        color: white;
+        border: none;
+        height: 34.8px;
+        width: 200px;
+        border-radius: 2px;
+        margin: 2px;
+    }
+</style>
+
+<div>
+    @using (Html.BeginForm("StudentGroupAndStudents", "Student", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+        @Html.HiddenFor(Model => Model.SelectedTerm)
+        @Html.HiddenFor(Model => Model.SelectedGroup)
+        @Html.HiddenFor(Model => Model.SelectedClass)
+    <input type="submit" value="@Constant.CommonLabel.Save" class="blackBtn"  />
+    <br /><br /><br />
+    <h4 class="list-group-item-heading">@Constant.StudentViewLabel.Title.Student</h4>
+    <div class="list-group">
+        @if (Model != null && Model.Students.Any())
+        {
+            for (int s = 0; s < Model.Students.Count; s++)
+            {
+                <div class="list-group-item">
+                    @Html.HiddenFor(Model => Model.Student[s].GroupID)
+                    @Html.HiddenFor(Model => Model.Student[s].MapID)
+                    @Html.HiddenFor(Model => Model.Student[s].StudentID)
+                    @Html.DisplayFor(Model => Model.Student[s].Student_Name)
+                    @Html.CheckBoxFor(Model => Model.Student[s].Contain, new { @class = "float-right contain" } )
+                </div>
+            }
+            <div class="list-group-item">
+                <label id="select-all">ALL</label>
+            </div>
+        }
+    </div>
+    }
+</div>
+
+
+
+
+
+    
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script>
+
+    submisstionAllSelected = false;
+
+    $('#select-all').click(function (event) {
+
+        if (!submisstionAllSelected) {
+            $('.contain').each(function () {
+                this.checked = true;
+                $('#select-all').text('NONE');
+            });
+
+            submisstionAllSelected = true;
+        } else {
+            $('.contain').each(function () {
+                this.checked = false;
+                $('#select-all').text('ALL');
+            });
+
+            submisstionAllSelected = false;
+        }
+    });
+</script>
+
+
+
+

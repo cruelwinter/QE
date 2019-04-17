@@ -1,0 +1,170 @@
+﻿
+@using QE.Models
+@using QE.Models.ViewModels
+@model StudentViewModel
+
+@{
+    ViewBag.Title = "Student";
+}
+
+<style>
+    .wrongInputMsg {
+        color: red;
+        display: none
+    }
+
+    .GeneralPage {
+        min-width: 1024px;
+        min-height: 576px;
+        background-color: #f2f2f2;
+        opacity: 0.9;
+        text-align: center;
+        vertical-align: middle;
+        text-align: center;
+        vertical-align: middle;
+        padding: 10px;
+    }
+
+    .termBox {
+        margin: 10px;
+        text-align: left;
+        font-weight: bold;
+        color: #5b5b5b;
+    }
+
+    .blackBtn {
+        background-color: #777777;
+        font-weight: bold;
+        color: white;
+        border: none;
+        height: 30px;
+        width: 200px;
+        border-radius: 2px;
+        margin: 2px;
+    }
+
+    .Btn_right{
+        float:right;
+    }
+
+    .classContainer {
+        vertical-align: middle;
+        width: 100%;
+        height: 100%;
+        margin: auto;
+        padding: inherit;
+    }
+
+    .classRows {
+        text-align: center;
+    }
+
+    .classBoxes {
+        width: 80px;
+        height: 80px;
+        background-color: white;
+        margin: 2px;
+        text-align: center;
+        vertical-align: middle;
+        line-height: 80px;
+        font-size: 40px;
+        color:#777777;
+        text-decoration:none;
+
+    }
+
+        .classBoxes:hover, .classBoxes:active{
+            text-decoration: none;
+        } 
+        
+        .block {
+            display: inline-block;
+
+        }
+
+    .fade {
+        opacity: 0;
+        display: none;
+        -webkit-transition: opacity 0.15s linear;
+        -moz-transition: opacity 0.15s linear;
+        -o-transition: opacity 0.15s linear;
+        transition: opacity 0.15s linear;
+        z-index: 1;
+    }
+
+        .fade.in {
+            opacity: 1;
+            display: block;
+        }
+</style>
+
+<div id="msgSuccess" class="alert alert-success alert-dismissable fade">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <strong>Success!</strong> @TempData[Constant.msg_success]
+</div>
+
+<div id="msgFail" class="alert alert-danger alert-dismissable fade">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <strong>Failed!</strong> @TempData[Constant.msg_error]
+</div>
+<div class="GeneralPage">
+        <div class="row termBox">
+            Select term:
+            @if (Model.TermList.Any())
+            {
+                @Html.DropDownList("TermSelectList", new SelectList(Model.TermList, "Value", "Text", Model.SelectedTerm), new { id = "TermList" })            
+            }
+        </div>
+        <div class="classContainer">
+            @if (Model.ClassList != null)
+            {
+                foreach (var form in Model.ClassList.GroupBy(f => f.FORM).OrderBy(f => f.Key))
+                {
+                    <div class="row">
+                        @foreach (var classes in form)
+                    {<div class="block">
+                                <a class="col-md-1 classBoxes" href="@Url.Action("_Student", "Student", new { Class_id = classes.ID, student_id = 0, term_id = Model.SelectedTerm})">
+                                    @classes.FORM@classes.NAME
+                                </a>
+                            </div>
+                        }
+                    </div>
+                }
+            }
+        </div>
+</div>
+
+
+
+
+
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+    //showStudent(function () { $('.studentForm').slideDown(300);});
+
+    $('#TermList').change(function () {
+        var termid = $(this).val();
+        var parm = window.location.pathname;
+        var url = window.location.href;
+        if (parm != null) {
+            url = url.split('?')[0];
+        }
+        window.location.href = url + "?term_id=" + termid;
+    });
+
+    var success = '@TempData[Constant.msg_success]';
+    var fail = '@TempData[Constant.msg_error]';
+
+    if (success) {
+        $("#msgSuccess").addClass("in");
+    }
+
+    if (fail) {
+        $("#msgFail").addClass("in");
+    }
+
+
+</script>

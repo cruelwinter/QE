@@ -1,0 +1,180 @@
+﻿@using QE.Models
+@model TermViewModel
+@{
+    int nextID = Model.next != null ? Model.next.ID : 0;
+}
+
+<style>
+    .GeneralPage {
+        min-width: 1024px;
+        min-height: 576px;
+        background-color: #f2f2f2;
+        opacity: 0.985;
+        text-align: center;
+        vertical-align: middle;
+        text-align: center;
+        vertical-align: middle;
+        padding: 10px;
+    }
+
+    .termPage {
+        height: inherit;
+        vertical-align: middle;
+        padding-bottom: calc(266px/2);
+        padding-top: calc(266px/2);
+    }
+
+    .termBox {
+        height: 300px;
+        background-color: white;
+        border: 2px solid #f2f2f2;
+        margin: auto;
+        text-align: center;
+        vertical-align: middle;
+        line-height: 300px;
+    }
+
+    .blackBtn {
+        background-color: #777777;
+        font-weight: bold;
+        color: white;
+        border: none;
+        height: 30px;
+        width: 200px;
+        border-radius: 2px;
+        margin: 2px;
+        display: inline-block;
+        line-height: normal;
+        vertical-align: middle;
+    }
+
+    .term {
+        display: inline-block;
+        line-height: normal;
+        vertical-align: middle;
+    }
+
+    .fade {
+        opacity: 0;
+        display: none;
+        -webkit-transition: opacity 0.15s linear;
+        -moz-transition: opacity 0.15s linear;
+        -o-transition: opacity 0.15s linear;
+        transition: opacity 0.15s linear;
+        z-index: 1;
+    }
+
+        .fade.in {
+            opacity: 1;
+            display: block;
+        }
+</style>
+
+<div id="msgSuccess" class="alert alert-success alert-dismissable fade">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <strong>Success!</strong> @TempData[Constant.msg_success]
+</div>
+
+<div id="msgFail" class="alert alert-danger alert-dismissable fade">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <strong>Failed!</strong> @TempData[Constant.msg_error]
+</div>
+
+<div class="GeneralPage">
+    <div class="container termPage">
+        @*@ViewData[Constant.msg_success]*@
+
+        @if (Model.previous != null && Model.previous.ID != 0)
+        {
+            <div class="col-md-4 termBox">
+                <div class="term">
+                    <h3>Previous Term</h3>
+                    <h2>@Model.previous.TERM_NAME</h2>
+                    <h4>
+                        @Model.previous.TERM_START.ToString(Constant.DATE_FORMAT) to
+                        @Model.previous.TERM_END.ToString(Constant.DATE_FORMAT)
+                    </h4>
+                </div>
+            </div>
+        }
+
+        @if (Model.current != null && Model.current.ID != 0)
+        {
+            <div class="col-md-4 termBox">
+                <div class="term">
+                    <h3> Current Term</h3>
+                    <h2>@Model.current.TERM_NAME</h2>
+                    <h4>
+                        @Model.current.TERM_START.ToString(Constant.DATE_FORMAT) to
+                        @Model.current.TERM_END.ToString(Constant.DATE_FORMAT)
+                    </h4>
+                </div>
+            </div>
+        }
+        @if (Model.next != null && Model.next.ID != 0)
+        {
+            <div class="col-md-4 termBox">
+                <div id="nextTerm" class="term">
+                    <h3> Next Term</h3>
+                    <h2>@Model.next.TERM_NAME</h2>
+                    <h4>
+                        @Model.next.TERM_START.ToString(Constant.DATE_FORMAT) to
+                        @Model.next.TERM_END.ToString(Constant.DATE_FORMAT)
+                    </h4>
+                    <button id="editButton" class="blackBtn">Edit</button>
+                </div>
+                <div id="editForm" style="display:none">@Html.Partial("_Term", Model.next)</div>
+            </div>
+        }
+        else
+        {
+            <div class="col-md-4 termBox">
+                <button id="createButton" class="blackBtn">Create Term</button>
+                <div id="createForm" style="display:none">@Html.Partial("_Term", new TERM())</div>
+            </div>
+        }
+    </div>
+</div>
+
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+
+<script>
+
+        $("#createButton").click(function () {
+            $("#createForm").show();
+            $("#createButton").hide();
+        });
+
+        $("#editButton").click(function () {
+            $("#editForm").show();
+            $("#editButton").hide();
+            $("#nextTerm").hide();
+        });
+
+        var showForm = '@TempData["showform"]';
+
+        if (showForm == 'True') {
+            if (@nextID != 0) {
+                $("#editForm").show();
+                $("#editButton").hide();
+                $("#nextTerm").hide();
+            } else {
+                $("#createForm").show();
+                $("#createButton").hide();
+            }
+        }
+
+    var success = '@TempData[Constant.msg_success]';
+    var fail = '@TempData[Constant.msg_error]';
+
+    if (success) {
+            $("#msgSuccess").addClass("in");
+    }
+
+    if (fail) {
+        $("#msgFail").addClass("in");
+    }
+
+    $(document).ready(function () {
+    });
+</script>

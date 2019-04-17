@@ -1,0 +1,307 @@
+﻿@using QE.Models
+@model StudentGroupViewModel
+
+@{
+    ViewBag.Title = "StudentGroup";
+}
+
+@*<head>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    </head>*@
+<style>
+    .GeneralPage {
+        min-width: 1024px;
+        min-height: 576px;
+        background-color: #f2f2f2;
+        opacity: 0.985;
+        text-align: center;
+        vertical-align: middle;
+        text-align: center;
+        vertical-align: middle;
+        padding: 10px;
+    }
+
+    .termBox {
+        margin: 10px;
+        text-align: left;
+        font-weight: bold;
+        color: #5b5b5b;
+    }
+
+        .termBox select {
+            border-radius: 5px;
+            color: #5b5b5b;
+        }
+
+
+    .glyphicon {
+        background: none;
+        border: none;
+        color: #777777;
+    }
+
+    .input-Box, .UserList {
+        border: 1px solid transparent;
+        padding: 2px;
+        vertical-align: middle;
+        width: 100%;
+        min-width: 100%;
+        text-align: center;
+        text-align-last: center;
+        text-overflow: clip;
+        display: none;
+    }
+
+
+    .blackBtn {
+        background-color: #777777;
+        font-weight: bold;
+        color: white;
+        border: none;
+        height: 30px;
+        width: 200px;
+        border-radius: 2px;
+        margin: 2px;
+    }
+
+    .blind {
+        display: none;
+    }
+
+
+
+    .fade {
+        opacity: 0;
+        display: none;
+        -webkit-transition: opacity 0.15s linear;
+        -moz-transition: opacity 0.15s linear;
+        -o-transition: opacity 0.15s linear;
+        transition: opacity 0.15s linear;
+        z-index: 1;
+    }
+
+        .fade.in {
+            opacity: 1;
+            display: block;
+        }
+</style>
+
+
+<div id="msgSuccess" class="alert alert-success alert-dismissable fade">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <strong>Success!</strong> @TempData[Constant.msg_success]
+</div>
+
+<div id="msgFail" class="alert alert-danger alert-dismissable fade">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <strong>Failed!</strong> @TempData[Constant.msg_error]
+</div>
+<div class="GeneralPage">
+    <div class="container">
+        <div class="row">
+            <div class="pull-left termBox h4">
+                Select term to edit:
+                @if (Model.TermList.Any())
+                {
+                    @Html.DropDownList("TermSelectList", new SelectList(Model.TermList, "Value", "Text", Model.SelectedTerm), new { id = "TermList" });
+
+                }
+            </div>
+            <div class="pull-right h2" style="margin-left:5px; margin-right:5px;">
+                <label class="fa fa-file-excel-o" id="btnExport" onclick="fnExcelReport('groups', 0)"></label>
+            </div>
+            <div class="pull-right">
+                <input type="button" class="blackBtn" value="Edit" id="EditButton">
+            </div>
+        </div>
+        @using (Html.BeginForm("StudentGroup", "Student", FormMethod.Post))
+        {
+            <table class="table table-striped sortable" id="groups">
+                <tr>
+                    <th class="col-md-2 text-center">@Constant.StudentViewLabel.StudentGroup.NAME</th>
+                    <th class="col-md-2 text-center">@Constant.StudentViewLabel.StudentGroup.TEACHER</th>
+                    <th class="col-md-2 text-center">@Constant.StudentViewLabel.StudentGroup.TEACHER_2</th>
+                    <th class="col-md-2 text-center">@Constant.StudentViewLabel.StudentGroup.TEACHER_3</th>
+                    <th class="col-md-2 text-center">@Constant.StudentViewLabel.StudentGroup.TEACHER_4</th>
+                    <th class="col-md-1 text-center">@Constant.StudentViewLabel.StudentGroup.LANGUAGE</th>
+                    <th class="col-md-1 text-center"></th>
+                </tr>
+
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true)
+                @Html.HiddenFor(model => model.SelectedTerm)
+
+                @for (int i = 0; i < Model.InactiveGroupsList.Count; i++)
+                {
+                    @Html.HiddenFor(model => model.InactiveGroupsList[i])
+                }
+
+                @if (Model.groupList != null)
+                {
+                    for (int i = 0; i < Model.groupList.Count; i++)
+                    {
+                        @Html.HiddenFor(model => model.groupList[i].ID)
+                        @Html.HiddenFor(model => model.groupList[i].TERM)
+                        @Html.HiddenFor(model => model.groupList[i].ADD_BY)
+                        @Html.HiddenFor(model => model.groupList[i].ADD_DATE)
+                        @Html.HiddenFor(model => model.groupList[i].MODIFY_BY)
+                        @Html.HiddenFor(model => model.groupList[i].MODIFY_DATE)
+                        @Html.HiddenFor(model => model.groupList[i].ACTIVE)
+                        <tr>
+                            <td class="col-md-2">
+                                <label class="field-value">@Model.groupList[i].NAME</label>
+                                @Html.EditorFor(model => model.groupList[i].NAME, new { htmlAttributes = new { @class = "input-Box blind" } })
+                            </td>
+                            <td class="col-md-2">
+                                <label class="field-value">
+                                    @if (Model.groupList[i].TEACHER > 0)
+                                    {@Model.AllUserList.Where(l => l.ID == Model.groupList[i].TEACHER).First().USER_NAME}
+                                </label>
+
+                                @if (Model.UserList.Any())
+                                {
+                                    @Html.DropDownListFor(model => model.groupList[i].TEACHER, new SelectList(Model.UserList, "Value", "Text", Model.groupList[i].TEACHER), new { @class = "UserList blind" });
+                                }
+                            </td>
+                            <td class="col-md-2">
+                                <label class="field-value">
+                                    @if (Model.groupList[i].TEACHER_2 > 0)
+                                    {@Model.AllUserList.Where(l => l.ID == Model.groupList[i].TEACHER_2).First().USER_NAME}
+                                </label>
+
+                                @if (Model.UserList.Any())
+                                {
+                                    @Html.DropDownListFor(model => model.groupList[i].TEACHER_2, new SelectList(Model.UserList, "Value", "Text", Model.groupList[i].TEACHER_2), new { @class = "UserList blind" });
+                                }
+                            </td>
+                            <td class="col-md-2">
+                                <label class="field-value">
+                                    @if (Model.groupList[i].TEACHER_3 > 0)
+                                    {@Model.AllUserList.Where(l => l.ID == Model.groupList[i].TEACHER_3).First().USER_NAME}
+                                </label>
+
+                                @if (Model.UserList.Any())
+                                {
+                                    @Html.DropDownListFor(model => model.groupList[i].TEACHER_3, new SelectList(Model.UserList, "Value", "Text", Model.groupList[i].TEACHER_3), new { @class = "UserList blind" });
+                                }
+                            </td>
+                            <td class="col-md-2">
+                                <label class="field-value">
+                                    @if (Model.groupList[i].TEACHER_4 > 0)
+                                    {@Model.AllUserList.Where(l => l.ID == Model.groupList[i].TEACHER_4).First().USER_NAME}
+                                </label>
+
+                                @if (Model.UserList.Any())
+                                {
+                                    @Html.DropDownListFor(model => model.groupList[i].TEACHER_4, new SelectList(Model.UserList, "Value", "Text", Model.groupList[i].TEACHER_4), new { @class = "UserList blind" });
+                                }
+                            </td>
+                            <td class="col-md-1">
+                                <label class="field-value">@Model.groupList[i].LANGUAGE</label>
+                                @Html.EditorFor(model => model.groupList[i].LANGUAGE, new { htmlAttributes = new { @class = "input-Box blind" } })
+                            </td>
+                            <td class="col-md-1 text-center"><button type="submit" class="glyphicon glyphicon-remove blind" formaction="@Url.Action("InactiveGroup", "Student",  new { group_id = Model.groupList[i].ID })" /></td>
+                        </tr>
+                    }
+                }
+            </table>
+            <table class="table blind">
+                @Html.HiddenFor(model => model.NewGroup.ID)
+                @Html.HiddenFor(Model => Model.NewGroup.TERM)
+
+                <tr>
+                    <th class="col-md-2 text-center">@Constant.StudentViewLabel.StudentGroup.NAME</th>
+                    <th class="col-md-2 text-center">@Constant.StudentViewLabel.StudentGroup.TEACHER</th>
+                    <th class="col-md-2 text-center">@Constant.StudentViewLabel.StudentGroup.TEACHER_2</th>
+                    <th class="col-md-2 text-center">@Constant.StudentViewLabel.StudentGroup.TEACHER_3</th>
+                    <th class="col-md-2 text-center">@Constant.StudentViewLabel.StudentGroup.TEACHER_4</th>
+                    <th class="col-md-1 text-center">@Constant.StudentViewLabel.StudentGroup.LANGUAGE</th>
+                    <th class="col-md-1 text-center"></th>
+                </tr>
+                <tr>
+                    <td class="col-md-2 text-center">@Html.EditorFor(model => model.NewGroup.NAME, new { htmlAttributes = new { @class = "input-Box blind" } })</td>
+                    <td class="col-md-2 text-center">
+                        @if (Model.UserList.Any())
+                        {
+                            @Html.DropDownListFor(model => model.NewGroup.TEACHER, new SelectList(Model.UserList, "Value", "Text", Model.NewGroup.TEACHER), new { @class = "UserList blind" })
+                        }
+                    </td>
+                    <td class="col-md-2 text-center">
+                        @if (Model.UserList.Any())
+                        {
+                            @Html.DropDownListFor(model => model.NewGroup.TEACHER_2, new SelectList(Model.UserList, "Value", "Text", Model.NewGroup.TEACHER_2), new { @class = "UserList blind" })
+                        }
+                    </td>
+                    <td class="col-md-2 text-center">
+                        @if (Model.UserList.Any())
+                        {
+                            @Html.DropDownListFor(model => model.NewGroup.TEACHER_3, new SelectList(Model.UserList, "Value", "Text", Model.NewGroup.TEACHER_3), new { @class = "UserList blind" })
+                        }
+                    </td>
+                    <td class="col-md-2 text-center">
+                        @if (Model.UserList.Any())
+                        {
+                            @Html.DropDownListFor(model => model.NewGroup.TEACHER_4, new SelectList(Model.UserList, "Value", "Text", Model.NewGroup.TEACHER_4), new { @class = "UserList blind" })
+                        }
+                    </td>
+                    <td class="col-md-1 text-center">@Html.EditorFor(model => model.NewGroup.LANGUAGE, new { htmlAttributes = new { @class = "input-Box blind" } })</td>
+                    <td class="col-md-1 text-center"><button type="submit" class="glyphicon glyphicon-plus" formaction="@Url.Action("InsertGroup", "Student", new { term_id = Model.SelectedTerm})" /></td>
+                </tr>
+                <tr>
+                    <td class="col-md-2">@Html.ValidationMessageFor(model => model.NewGroup.NAME, "", new { @class = "text-danger" })</td>
+                    <td class="col-md-2">@Html.ValidationMessageFor(model => model.NewGroup.TEACHER, "", new { @class = "text-danger" })</td>
+                    <td class="col-md-2">@Html.ValidationMessageFor(model => model.NewGroup.TEACHER_2, "", new { @class = "text-danger" })</td>
+                    <td class="col-md-2">@Html.ValidationMessageFor(model => model.NewGroup.TEACHER_3, "", new { @class = "text-danger" })</td>
+                    <td class="col-md-2">@Html.ValidationMessageFor(model => model.NewGroup.TEACHER_4, "", new { @class = "text-danger" })</td>
+                    <td class="col-md-1">@Html.ValidationMessageFor(model => model.NewGroup.LANGUAGE, "", new { @class = "text-danger" })</td>
+                    <td class="col-md-1"></td>
+                </tr>
+            </table>
+            <input type="submit" class="blackBtn blind" value="Save" id="save-btn">
+        }
+    </div>
+</div>
+
+
+
+
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script src="~/Scripts/sorttable/sorttable.js"></script>
+<script src="~/Scripts/Common.tool.js"></script>
+<script>
+
+    $('#EditButton').show(); //check authentication
+
+
+    $('#EditButton').click(function () {
+        $('.blind').toggle();
+        $('.field-value').toggle();
+    });
+
+    var showForm = '@TempData["showform"]';
+    if (showForm == 'True') {
+        $('.blind').show();
+        $('.field-value').toggle();
+    }
+
+    $('#TermList').change(function () {
+        var id = $(this).val();
+        window.location.href = '@Url.Action("StudentGroup","Student")?term_id=' + id;
+    });
+
+    var success = '@TempData[Constant.msg_success]';
+    var fail = '@TempData[Constant.msg_error]';
+
+    if (success) {
+            $("#msgSuccess").addClass("in");
+    }
+
+    if (fail) {
+        $("#msgFail").addClass("in");
+    }
+
+    $(document).ready(function () {
+
+    });
+</script>
+

@@ -1,0 +1,101 @@
+﻿@using QE.Models
+
+@{
+    ViewBag.Title = "Login";
+}
+<style>
+
+    .GeneralPage {
+        min-width: 1024px;
+        min-height: 576px;
+        background-color: #f2f2f2;
+        opacity: 0.9;
+        text-align: center;
+        vertical-align: middle;
+        text-align: center;
+        vertical-align: middle;
+        padding: 10px;
+    }
+
+    .loginPage {
+        background: none;
+        min-width: 1024px;
+        min-height: 576px;
+        text-align: center;
+        vertical-align: middle;
+        display: inline;
+        line-height: 150px;
+    }
+
+    .loginBox {
+        width: 40%;
+        margin: auto;
+        line-height: normal;
+        color: #777777;
+    }
+
+    .inputBox {
+        background-color: #ffffff;
+        border: 1px solid #cccccc;
+        border-radius: 4px;
+        padding-left: 4px;
+        vertical-align: middle;
+        text-align: center;
+    }
+
+    .blackBtn {
+        background-color: #777777;
+        font-weight: bold;
+        color: white;
+        border: none;
+        height: 30px;
+        width: 200px;
+        border-radius: 2px;
+        margin: 2px;
+    }
+
+    #parent {
+        position: absolute;
+        background-color: #f2f2f2;
+        opacity: 0.98;
+        width: 400px;
+        height: 400px;
+        border-radius: 10px;
+        /* position screen center*/
+        top: calc(50vh - (/* height */400px / 2));
+        left: calc(50vw - (/* width */400px / 2));
+    }
+
+    #child {
+        position: absolute;
+        width: 400px;
+        height: 200px;
+        /* position screen center*/
+        top: calc(50vh - (/* height */200px / 2));
+        left: calc(50vw - (/* width */400px / 2));
+    }
+</style>
+
+<div class="loginPage container">
+    <div class="jumbotron loginBox">
+        <div id="msg" class="text-danger form-group">@TempData["msg"]</div>
+        <form role="form" class="form-horizontal" method="post" action="@Url.Action("Login","Account")">
+            @Html.AntiForgeryToken()
+            <div>
+                <label>User ID</label>
+                <div class="form-group"><input type="text" name="USER_ID" value="" class="inputBox" /></div>
+
+                <label>Password</label>
+                <div class="form-group"><input type="password" name="PASSWORD" value="" class="inputBox" /></div>
+
+                <label>Remember me</label>
+                <input type="checkbox" name="rememberMe" value="Y" />
+
+                <div class="form-group"><input type="submit" value="Login" class="btn blackBtn" /></div>
+            </div>
+            <a href="#">@Constant.LoginViewLabel.ForgotPassword</a>
+        </form>
+    </div>
+</div>
+
+
